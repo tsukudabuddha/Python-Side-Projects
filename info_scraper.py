@@ -12,9 +12,9 @@ def create_url(name):
 
 def build_soup(url):
     """Build and return soup."""
-    # query the website and return the html to the variable ‘page’
+    # query the website and return the html to the variable 'page'
     page = requests.get(url)
-    # parse the html using beautiful soup and store in variable `soup`
+    # parse the html using beautiful soup and store in variable 'soup'
     return BeautifulSoup(page.content, "html.parser")
 
 
@@ -22,7 +22,8 @@ def find_date(soup):
     """Find and return the most recent commit."""
     holding_class = soup.find("div", {"class": "f6 text-gray mt-2"})
     date = str(holding_class.find("relative-time")["datetime"]).split('T')[0]
-    return date
+    time = str(holding_class.find("relative-time")["datetime"]).split('T')[1]
+    return date, time
 
 
 def compare_date(date):
@@ -36,12 +37,16 @@ def compare_date(date):
 
 def main():
     """Begin the script."""
-    name = input("Enter your github username: ")  # possibly pass from call
+    name = "tsukudabuddha"  # input("Enter your github username: ")
+    # possibly pass from call
     # specify the url
     page_url = create_url(name)
     # Create 'soup'
     soup = build_soup(page_url)
-    date = find_date(soup)
+    timestamp = find_date(soup)
+    date = timestamp[0]
+    time = timestamp[1]  # In zulu timezone - correct to location
+
     if compare_date(date):
         print("Good Job! You've committed today!")
     else:
